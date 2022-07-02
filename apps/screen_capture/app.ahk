@@ -41,22 +41,20 @@ setAppScreenCaptureSelectionMenu() {
 		return
 	}
 	appScreenCaptureHasSetSelectionMenu := true
-	windowWidth := A_ScreenWidth/3
-	windowHeight := A_ScreenHeight/3
-	Gui, Font, s12
-	Gui, Add, Button, gAppScreenCaptureSetPixelMod, LAUNCH PIXEL MOD
-	Gui, Add, Button, gAppScreenCaptureSetImgMod, LAUNCH IMG MOD
-	Gui, Show, w%windowWidth% h%windowHeight% x%windowWidth% y%windowHeight%, Select your screen capture mod
+	prompt := new PromptUI("Choose your Screen Capture mod", A_ScreenWidth/2, A_ScreenHeight/2)
+	prompt.addButton("AppScreenCaptureSetPixelMod", "LAUNCH PIXEL MOD")
+	prompt.addButton("AppScreenCaptureSetImgMod", "LAUNCH IMG MOD")
+	set_prompt_mod(prompt)
 }
 
 AppScreenCaptureSetPixelMod() {
 	appScreenCaptureMod := WINDOW_SEARCH_TYPE.PIXEL
-	Gui Destroy
+	end_prompt_mode()
 }
 
 AppScreenCaptureSetImgMod() {
 	appScreenCaptureMod := WINDOW_SEARCH_TYPE.IMG
-	Gui Destroy
+	end_prompt_mode()
 }
 
 appScreenCaptureEmptyHotkey() {
@@ -121,19 +119,13 @@ registerImgZone() {
 	appScreenCaptureInput2YPos := null
 }
 
-customSuccess() {
-	MsgBox, success
-}
-
-customFailure() {
-}
-
 screenshotImgZone() {
 	gimpName = GNU Image Manipulation Program
 	gimpNamePlugin = GNU Image Manipulation Program Plug-In
 	gimpProcess = %A_ScriptDir%\utils\gimp\bin\gimp-2.8.exe
 	gimp := new Program(gimpName, gimpProcess)
 	gimpPlugin := new Program(gimpNamePlugin, gimpProcess)
+
 	if(!appScreenCaptureHasLaunchedGimp) {
 		gimp.start()
 		appScreenCaptureHasLaunchedGimp := true
@@ -151,9 +143,6 @@ saveImgZone() {
 	Hotkey, Enter, off
 	appScreenCaptureHasRegisteredScreenName := true
 	ToolTip % null
-	windowWidth := A_ScreenWidth/3
-	windowHeight := A_ScreenHeight/3
-	Gui, Font, s12
 	screenInfo = Info registered for screen :`n`
 	screenInfo = Type : IMG WITH POSITION`n`n
 	screenInfo = %screenInfo% { x1: %appScreenCaptureInputXPos%
@@ -161,12 +150,13 @@ saveImgZone() {
 		, x2: %appScreenCaptureInput2XPos%
 		, y2: %appScreenCaptureInput2YPos% }
 	screenInfo = %screenInfo% `n` `n` Please enter a name for this screen : 
-	Gui, Add, Text,, %screenInfo%
-	Gui, Add, Edit, vAppScreenCaptureScreenName
-	Gui, Add, Text,, Screen description : 
-	Gui, Add, Edit, vAppScreenCaptureScreenDescription
-	Gui, Add, Button, gAppScreenCaptureRegisterImgScreenName, Register Screen
-	Gui, Show, w%windowWidth% h%windowHeight% x%windowWidth% y%windowHeight%, Give a name to your screen
+	prompt := new PromptUI("Give a name to your screen", A_ScreenWidth/2, A_ScreenHeight/2)
+	prompt.addText(screenInfo)
+	prompt.addInputText("AppScreenCaptureScreenName")
+	prompt.addText("Screen description : ")
+	prompt.addInputText("AppScreenCaptureScreenDescription")
+	prompt.addButton("AppScreenCaptureRegisterImgScreenName", "Register Screen")
+	set_prompt_mod(prompt)
 }
 
 setImgModClickInputListener() {
@@ -179,8 +169,7 @@ setImgModClickInputListener() {
 }
 
 AppScreenCaptureRegisterImgScreenName() {
-	Gui Submit
-	Gui Destroy
+	submit_prompt()
 	dir = %A_ScriptDir%\screens\
 	fileName = %AppScreenCaptureScreenName%.ahk 
 	path = %dir%%fileName%
@@ -234,8 +223,7 @@ setpixelModClickInputListener() {
 }
 
 AppScreenCaptureRegisterPixelScreenName() {
-	Gui Submit
-	Gui Destroy
+	submit_prompt()
 	dir = %A_ScriptDir%\screens\
 	fileName = %AppScreenCaptureScreenName%.ahk 
 	path = %dir%%fileName%
@@ -276,9 +264,6 @@ appScreenCaptureSetRegisterPixelScreenName() {
 	Hotkey, Enter, off
 	appScreenCaptureHasRegisteredScreenName := true
 	ToolTip % null
-	windowWidth := A_ScreenWidth/3
-	windowHeight := A_ScreenHeight/3
-	Gui, Font, s12
 	screenInfo = Info registered for screen`n`
 	screenInfo = Type : SINGLE PIXEL WITH POSITION`n`
 	if(appScreenCaptureXPos) {
@@ -288,10 +273,11 @@ appScreenCaptureSetRegisterPixelScreenName() {
 		screenInfo = %screenInfo% `n` Pixel color : %appScreenCapturePixelColor%
 	}
 	screenInfo = %screenInfo% `n` `n` Please enter a name for this screen : 
-	Gui, Add, Text,, %screenInfo%
-	Gui, Add, Edit, vAppScreenCaptureScreenName
-	Gui, Add, Text,, Screen description : 
-	Gui, Add, Edit, vAppScreenCaptureScreenDescription
-	Gui, Add, Button, gAppScreenCaptureRegisterPixelScreenName, Register Screen
-	Gui, Show, w%windowWidth% h%windowHeight% x%windowWidth% y%windowHeight%, Give a name to your screen
+	prompt := new PromptUI("Give a name to your screen", A_ScreenWidth/2, A_ScreenHeight/2)
+	prompt.addText(screenInfo)
+	prompt.addInputText("AppScreenCaptureScreenName")
+	prompt.addText("Screen description : ")
+	prompt.addInputText("AppScreenCaptureScreenDescription")
+	prompt.addButton("AppScreenCaptureRegisterPixelScreenName", "Register Screen")
+	set_prompt_mod(prompt)
 }

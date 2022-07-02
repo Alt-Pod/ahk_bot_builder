@@ -1,9 +1,9 @@
 global CYCLE_DATA := { hasEngineWorked: false
 	, hasEngineStarted: false
 	, sleepTime: 0 
-	, hasPrompted: false 
+	, promptMod: false 
 	, textToWrite: ""
-	, botMod: ""
 	, uiScan: null
 	, action: null
+	, store: {}
 	, sequences: [] }
