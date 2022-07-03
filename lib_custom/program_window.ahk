@@ -14,6 +14,10 @@ program_exists(programProcessName) {
 	return WinExist(programProcessName)
 }
 
+close_program(programProcessName) {
+	WinClose, %programProcessName%
+}
+
 class Program {
 	__New(processName, processLocation) {
 		this.processName := processName
@@ -36,5 +40,11 @@ class Program {
 
 	uiScan(windowSearch) {
 		CYCLE_DATA.uiScan := windowSearch
+	}
+
+	end() {
+		if(program_exists(this.processName)) {
+			close_program(this.processName)
+		}
 	}
 }

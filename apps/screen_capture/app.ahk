@@ -20,6 +20,7 @@ global appScreenCaptureHasSetSelectionMenu := false
 global appScreenCaptureHasRegisteredScreenName := false
 global appScreenCaptureHasLaunchedSaveImg := false
 global appScreenCaptureHasLaunchedGimp := false
+global appScreenCaptureGimpEnd := false
 
 appScreenCapture() {
 	setAppScreenCaptureSelectionMenu()
@@ -126,6 +127,10 @@ screenshotImgZone() {
 	gimp.activate()
 	gimpPlugin.activate()
 	sequenceCropImgWithGimp(AppScreenCaptureScreenName, { x1: appScreenCaptureInputXPos, y1: appScreenCaptureInputYPos, x2: appScreenCaptureInput2XPos, y2: appScreenCaptureInput2YPos })
+	if(appScreenCaptureGimpEnd) {
+		gimp.end()
+		Reload
+	}
 }
 
 saveImgZone() {

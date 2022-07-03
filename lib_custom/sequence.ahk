@@ -9,8 +9,8 @@ handle_sequence() {
 		remove_first_sequence()
 	} else {
 		sequence.play()
+		CYCLE_DATA.sequences := sequences
 	}
-	CYCLE_DATA.sequences := sequences
 }
 
 add_sequence(sequence) {
@@ -81,7 +81,8 @@ class Sequence {
 global SEQUENCE_STEP_TYPE := { WAIT_FOR_SCREEN: "WAIT_FOR_SCREEN"
 	, ACTION: "ACTION"
 	, SCREEN_FAILURE_ACTION: "SCREEN_FAILURE_ACTION"
-	, SCREEN_FAILURE_STEP: "SCREEN_FAILURE_STEP" }
+	, SCREEN_FAILURE_STEP: "SCREEN_FAILURE_STEP"
+	, CALLBACK: "CALLBACK" }
 
 remove_sequence_step_from_sequence(payload) {
 	if(!payload || !payload.stepIdToBeRemoved) {
@@ -212,20 +213,9 @@ class SequenceStep {
 		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_FAILURE_STEP) {
 			this.runScreenFailureStep()
 		}
-	}
-
-	runScreenFailureAction() {
-		add_window_search_to_ui_scan(this.windowSearch
-			, func("remove_sequence_step_from_sequence")
-			, func("sequence_add_step_first_as_action")
-			, { action: this.action, stepIdToBeRemoved: this.id })
-	}
-
-	runScreenFailureStep() {
-		add_window_search_to_ui_scan(this.windowSearch
-			, func("remove_sequence_step_from_sequence")
-			, func("sequence_add_step_first_as_failure_step")
-			, { failureStep: this.failureStep, stepIdToBeRemoved: this.id })
+		if(this.type == SEQUENCE_STEP_TYPE.CALLBACK) {
+			this.runCallback()
+		}
 	}
 
 	runChainedStep() {
@@ -249,6 +239,20 @@ class SequenceStep {
 		}
 	}
 
+	runScreenFailureAction() {
+		add_window_search_to_ui_scan(this.windowSearch
+			, func("remove_sequence_step_from_sequence")
+			, func("sequence_add_step_first_as_action")
+			, { action: this.action, stepIdToBeRemoved: this.id })
+	}
+
+	runScreenFailureStep() {
+		add_window_search_to_ui_scan(this.windowSearch
+			, func("remove_sequence_step_from_sequence")
+			, func("sequence_add_step_first_as_failure_step")
+			, { failureStep: this.failureStep, stepIdToBeRemoved: this.id })
+	}
+
 	runAction() {
 		add_action(this.action)
 		this.isFinished := true
@@ -261,8 +265,9 @@ class SequenceStep {
 			, { stepIdToBeRemoved: this.id })
 	}
 
-	runScreenChainedAction() {
-		add_action(this.action)
+	runCallback() {
+		callback := this.options.callback
+		%callback%()
 		this.isFinished := true
 	}
 
@@ -281,6 +286,9 @@ class SequenceStep {
 		}
 		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_FAILURE_STEP && (!this.windowSearch || !this.options.failureStep)) {
 			log.add(text_concat("SEQUENCE STEP - Missing action/windowSearch/options for ", this.name, ", type : " this.type), true)
+		}
+		if(this.type == SEQUENCE_STEP_TYPE.CALLBACK && (!this.options || !this.options.callback)) {
+			log.add(text_concat("SEQUENCE STEP - Missing options for ", this.name, ", type : " this.type), true)
 		}
 	}
 }
