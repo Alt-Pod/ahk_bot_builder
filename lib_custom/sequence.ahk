@@ -82,7 +82,7 @@ global SEQUENCE_STEP_TYPE := { WAIT_FOR_SCREEN: "WAIT_FOR_SCREEN"
 	, ACTION: "ACTION"
 	, SCREEN_FAILURE_ACTION: "SCREEN_FAILURE_ACTION"
 	, SCREEN_FAILURE_STEP: "SCREEN_FAILURE_STEP"
-	, CALLBACK: "CALLBACK" }
+	, EMPTY: "EMPTY" }
 
 remove_sequence_step_from_sequence(payload) {
 	if(!payload || !payload.stepIdToBeRemoved) {
@@ -194,6 +194,9 @@ class SequenceStep {
 		if(options && options.repeatedStep) {
 			this.repeatedStep := options.repeatedStep
 		}
+		if(options && options.callback) {
+			this.callback := options.callback
+		}
 
 		this.setup()
 	}
@@ -213,9 +216,10 @@ class SequenceStep {
 		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_FAILURE_STEP) {
 			this.runScreenFailureStep()
 		}
-		if(this.type == SEQUENCE_STEP_TYPE.CALLBACK) {
-			this.runCallback()
+		if(this.type == SEQUENCE_STEP_TYPE.EMPTY) {
+			this.isFinished := true
 		}
+		this.runCallback()
 	}
 
 	runChainedStep() {
@@ -266,9 +270,12 @@ class SequenceStep {
 	}
 
 	runCallback() {
-		callback := this.options.callback
+		callback := this.callback
+		if(!callback) {
+			return
+		}
 		%callback%()
-		this.isFinished := true
+		this.callback := false
 	}
 
 	setup() {
@@ -286,9 +293,6 @@ class SequenceStep {
 		}
 		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_FAILURE_STEP && (!this.windowSearch || !this.options.failureStep)) {
 			log.add(text_concat("SEQUENCE STEP - Missing action/windowSearch/options for ", this.name, ", type : " this.type), true)
-		}
-		if(this.type == SEQUENCE_STEP_TYPE.CALLBACK && (!this.options || !this.options.callback)) {
-			log.add(text_concat("SEQUENCE STEP - Missing options for ", this.name, ", type : " this.type), true)
 		}
 	}
 }

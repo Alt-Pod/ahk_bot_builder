@@ -32,6 +32,10 @@ class Program {
 		}
 	}
 
+	isOpen() {
+		return is_window_open(this.processName)
+	}
+
 	activate() {
 		if(is_window_open(this.processName)) {
 			activate_window(this.processName)

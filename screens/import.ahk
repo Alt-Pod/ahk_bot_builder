@@ -3,3 +3,6 @@
 #Include %A_ScriptDir%/screens/gimp_file_export_open.ahk
 #Include %A_ScriptDir%/screens/gimp_confirmation_export_modal.ahk
 #Include %A_ScriptDir%/screens/gimp_destroy_modal_confirmation.ahk
+#Include %A_ScriptDir%/screens/riot_login.ahk
+#Include %A_ScriptDir%/screens/riot_login_username_input.ahk
+#Include %A_ScriptDir%/screens/riot_login_password_input.ahk

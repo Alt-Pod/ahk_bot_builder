@@ -84,6 +84,15 @@ class ScreenAction {
 			Send ^{%key% down}
 			Send ^{%key% up}
 		}
+
+		this.handleCooldown()
+	}
+
+	handleCooldown() {
+		if(!this.options.cooldown) {
+			return
+		}
+		pause(this.options.cooldown)
 	}
 
 	setup() {

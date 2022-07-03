@@ -1,5 +1,5 @@
 
-#Include %A_ScriptDir%/apps/screen_capture/sequences/crop_img_with_gimp.ahk
+#Include %A_ScriptDir%/apps/sequences/crop_img_with_gimp.ahk
 
 global appScreenCaptureXPos
 global appScreenCaptureYPos
@@ -20,7 +20,7 @@ global appScreenCaptureHasSetSelectionMenu := false
 global appScreenCaptureHasRegisteredScreenName := false
 global appScreenCaptureHasLaunchedSaveImg := false
 global appScreenCaptureHasLaunchedGimp := false
-global appScreenCaptureGimpEnd := false
+global appScreenCaptureEndGimp := false
 
 appScreenCapture() {
 	setAppScreenCaptureSelectionMenu()
@@ -126,11 +126,18 @@ screenshotImgZone() {
 	}
 	gimp.activate()
 	gimpPlugin.activate()
-	sequenceCropImgWithGimp(AppScreenCaptureScreenName, { x1: appScreenCaptureInputXPos, y1: appScreenCaptureInputYPos, x2: appScreenCaptureInput2XPos, y2: appScreenCaptureInput2YPos })
-	if(appScreenCaptureGimpEnd) {
+	zone := { x1: appScreenCaptureInputXPos, y1: appScreenCaptureInputYPos, x2: appScreenCaptureInput2XPos, y2: appScreenCaptureInput2YPos }
+	if(appScreenCaptureEndGimp) {
 		gimp.end()
 		Reload
+		return
 	}
+	sequenceCropImgWithGimp(AppScreenCaptureScreenName, zone, func("endSequenceCropImgWithGimp"))
+
+}
+
+endSequenceCropImgWithGimp() {
+	appScreenCaptureEndGimp := true
 }
 
 saveImgZone() {

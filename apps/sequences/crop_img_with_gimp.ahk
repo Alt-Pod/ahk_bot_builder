@@ -1,6 +1,6 @@
 global hasSequenceCropImgWithGimpStarted := false
 
-sequenceCropImgWithGimp(name, zone) {
+sequenceCropImgWithGimp(name, zone, callback) {
 	if(hasSequenceCropImgWithGimpStarted) {
 		return
 	}
@@ -92,11 +92,12 @@ sequenceCropImgWithGimp(name, zone) {
 	gimpHome := new SequenceStep(SEQUENCE_STEP_TYPE.SCREEN_FAILURE_ACTION, "gimpHome", screen_gimp_open, confirmCloseFile)
 	sequence.addStep(gimpHome)
 
-	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.CALLBACK, "updateData", false, false, { callback: func("sequenceCropImgWithGimpEnd") } ))
+	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.EMPTY, "updateData", false, false, { callback: func("resetSequenceCropImgWithGimp") } ))
+	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.EMPTY, "updateData", false, false, { callback: callback } ))
 
 	add_sequence(sequence)
 }
 
-sequenceCropImgWithGimpEnd() {
-	appScreenCaptureGimpEnd := true
+resetSequenceCropImgWithGimp() {
+	hasSequenceCropImgWithGimpStarted := false
 }
