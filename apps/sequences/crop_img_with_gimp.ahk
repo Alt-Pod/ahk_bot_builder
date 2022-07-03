@@ -92,7 +92,7 @@ sequenceCropImgWithGimp(name, zone, callback) {
 	gimpHome := new SequenceStep(SEQUENCE_STEP_TYPE.SCREEN_FAILURE_ACTION, "gimpHome", screen_gimp_open, confirmCloseFile)
 	sequence.addStep(gimpHome)
 
-	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.EMPTY, "updateData", false, false, { callback: func("resetSequenceCropImgWithGimp") } ))
+	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.EMPTY, "resetSequence", false, false, { callback: func("resetSequenceCropImgWithGimp") } ))
 	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.EMPTY, "updateData", false, false, { callback: callback } ))
 
 	add_sequence(sequence)

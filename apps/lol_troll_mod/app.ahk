@@ -3,16 +3,13 @@
 global appLolTrollModHasRiotLaunched := false
 
 appLolTrollMod() {
-
-	lolClientName = League of Legends
-
-	riot := new Program(riotName, riotProcess)
-
+	appLolTrollModHandleRiot()
 }
 
 appLolTrollModHandleRiot() {
 	riotName = Riot Client
 	riotProcess = C:\Riot Games\Riot Client\RiotClientServices.exe
+	riot := new Program(riotName, riotProcess)
 
 	if(!appLolTrollModHasRiotLaunched) {
 		riot.start()
