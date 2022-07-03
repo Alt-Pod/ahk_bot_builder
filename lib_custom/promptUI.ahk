@@ -76,6 +76,7 @@ class PromptUI {
 		this.breakLine()
 		this.addResetButton()
 		this.addExitButton()
+		log.add(text_concat("PROMPT - Opened prompt with title : '", title, "'"))
 		Gui, Show, w%windowWidth% h%windowHeight% x%offsetX% y%offsetY%, %title%
 	}
 

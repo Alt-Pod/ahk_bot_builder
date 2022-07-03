@@ -15,7 +15,8 @@ handle_action() {
 global ACTION_TYPE := { CLICK_RIGHT: "CLICK_RIGHT"
 	, CLICK_LEFT: "CLICK_LEFT"
 	, CLICK_LEFT_OFFSET: "CLICK_LEFT_OFFSET"
-	, CTRL_SHIFT_KEY: "CTRL_SHIFT_KEY" }
+	, CTRL_SHIFT_KEY: "CTRL_SHIFT_KEY"
+	, WRITE: "WRITE" }
 
 ; AVAILABLE OPTIONS :
 ; x
@@ -47,6 +48,9 @@ class ScreenAction {
 			key := this.options.key
 			Send ^+{%key%}
 		}
+		if(this.type == ACTION_TYPE.WRITE) {
+			write(this.options.text)
+		}
 	}
 
 	setup() {
@@ -64,6 +68,9 @@ class ScreenAction {
 		}
 		if(this.type == ACTION_TYPE.CLICK_LEFT_OFFSET && (!this.options || !this.options.x || !this.options.y || !this.options.offsetX || !this.options.offsetY)) {
 			log.add(text_concat("ACTION - Missing options for ", this.name, ", type : " this.type), true)
-		}	
+		}
+		if(this.type == ACTION_TYPE.WRITE && (!this.options || !this.options.text)) {
+			log.add(text_concat("ACTION - Missing options for ", this.name, ", type : " this.type), true)
+		}
 	}
 }
