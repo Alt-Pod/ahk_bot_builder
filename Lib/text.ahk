@@ -36,3 +36,8 @@ text_concat(text1, text2, text3 = "", text4 = "", text5 = "", text6 = "", text7 
 	concatenation = %text1%%text2%%text3%%text4%%text5%%text6%%text7%%text8%%text9%%text10%%text11%%text12%
 	return concatenation
 }
+
+text_stringify(number) {
+	text := %number%
+	return text
+}

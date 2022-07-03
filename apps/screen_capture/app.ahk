@@ -9,8 +9,6 @@ global appScreenCaptureInput2XPos
 global appScreenCaptureInput2YPos
 global appScreenCaptureOffsetXPos
 global appScreenCaptureOffsetYPos
-global appScreenCaptureInputOffsetXPos
-global appScreenCaptureInputOffsetYPos
 global appScreenCapturePixelColor
 global appScreenCaptureInfo
 global appScreenCaptureMod
@@ -78,9 +76,6 @@ ImgMod() {
 		return
 	}
 	setImgModClickInputListener()
-	CoordMode, Mouse, Screen
-	MouseGetPos, appScreenCaptureOffsetXPos, appScreenCaptureOffsetYPos
-	CoordMode, Mouse, Window
 	MouseGetPos, appScreenCaptureXPos, appScreenCaptureYPos
 	appScreenCaptureInfo = x%appScreenCaptureXPos% y%appScreenCaptureYPos%`n`screen_x%appScreenCaptureOffsetXPos% screen_y%appScreenCaptureOffsetYPos%
 	if(!appScreenCaptureInputXPos) {
@@ -103,8 +98,6 @@ registerImgZone() {
 	if(!appScreenCaptureInputXPos) {
 		appScreenCaptureInputXPos := appScreenCaptureXPos
 		appScreenCaptureInputYPos := appScreenCaptureYPos
- 		appScreenCaptureInputOffsetXPos := appScreenCaptureOffsetXPos
- 		appScreenCaptureInputOffsetYPos := appScreenCaptureOffsetYPos
 		return
 	}
 	if(!appScreenCaptureInput2XPos) {
@@ -132,7 +125,7 @@ screenshotImgZone() {
 	}
 	gimp.activate()
 	gimpPlugin.activate()
-	sequenceCropImgWithGimp()
+	sequenceCropImgWithGimp(AppScreenCaptureScreenName, { x1: appScreenCaptureInputXPos, y1: appScreenCaptureInputYPos, x2: appScreenCaptureInput2XPos, y2: appScreenCaptureInput2YPos })
 }
 
 saveImgZone() {

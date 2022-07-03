@@ -16,7 +16,9 @@ global ACTION_TYPE := { CLICK_RIGHT: "CLICK_RIGHT"
 	, CLICK_LEFT: "CLICK_LEFT"
 	, CLICK_LEFT_OFFSET: "CLICK_LEFT_OFFSET"
 	, CTRL_SHIFT_KEY: "CTRL_SHIFT_KEY"
-	, WRITE: "WRITE" }
+	, WRITE: "WRITE"
+	, TAB: "TAB"
+	, ENTER: "ENTER" }
 
 ; AVAILABLE OPTIONS :
 ; x
@@ -50,6 +52,12 @@ class ScreenAction {
 		}
 		if(this.type == ACTION_TYPE.WRITE) {
 			write(this.options.text)
+		}
+		if(this.type == ACTION_TYPE.TAB) {
+			Send {tab}
+		}
+		if(this.type == ACTION_TYPE.ENTER) {
+			Send {Enter}
 		}
 	}
 
