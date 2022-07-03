@@ -87,7 +87,7 @@ class WindowSearch {
 		this.options := options
 	}
 
-	success(imgCoordX, imgCoordY) {
+	success() {
  		log.add(text_concat("UIScan - WindowSearch SUCCESS (found) - name : ", this.name, ", type: ", this.type))
 		onSuccess := this.onSuccess
 		if(!!onSuccess) {
@@ -109,7 +109,7 @@ class WindowSearch {
 		imgPath = %A_ScriptDir%/screens/img/%imgName%.png
 		ImageSearch, posX, posY, zone.x1, zone.y1, zone.x2, zone.y2, *5 %imgPath%
 		if(posX) {
-			this.success(posX, posY)
+			this.success()
 			return
 		}
 		this.failure()
