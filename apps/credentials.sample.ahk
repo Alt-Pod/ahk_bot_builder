@@ -1,0 +1,3 @@
+; EXAMPLE TEMPLATE TO DUPLICATE AND NAME 
+
+global credentials := { APP_LOGIN_USERNAME: "MyUsername", APP_LOGIN_PASSWORD: "MyPassword" }

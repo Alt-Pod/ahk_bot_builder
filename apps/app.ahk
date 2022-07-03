@@ -1,6 +1,7 @@
-#Include %A_ScriptDir%\apps\screen_capture\app.ahk
-#Include %A_ScriptDir%\apps\menu\app.ahk
-#Include %A_ScriptDir%\apps\lol_troll_mod\app.ahk
+#Include %A_ScriptDir%\apps\credentials.ahk
+#Include %A_ScriptDir%\apps\src\screen_capture\app.ahk
+#Include %A_ScriptDir%\apps\src\menu\app.ahk
+#Include %A_ScriptDir%\apps\src\lol_troll_mod\app.ahk
 
 app() {
 	appMod := get_value_from_store("appMod")
