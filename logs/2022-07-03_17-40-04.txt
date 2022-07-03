@@ -1,0 +1,120 @@
+[17:40:04]PROMPT - Opened prompt with title : 'Choose your bot mod'
+[17:40:06]PROMPT - Opened prompt with title : 'Choose your Screen Capture mod'
+[17:40:09]PROMPT - Opened prompt with title : 'Give a name to your screen'
+[17:40:11]SEQUENCE Crop img with gimp has started
+[17:40:11]UIScan - WindowSearch name : gimp_open, type: PIXEL
+[17:40:11]UIScan - WindowSearch SUCCESS (found) - name : gimp_open, type: PIXEL
+[17:40:11]ACTION - name : copyPrintscreen, type: CTRL_SHIFT_KEY
+[17:40:11]ACTION - name : goToMenu, type: PRESS_KEY
+[17:40:11]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:11]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:11]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:11]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:12]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:12]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:12]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:12]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:12]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:12]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:12]UIScan - WindowSearch name : gimp_image_menu_open, type: PIXEL
+[17:40:12]UIScan - WindowSearch FAILURE (not found) - name : gimp_image_menu_open, type: PIXEL
+[17:40:12]ACTION - name : goToMenu, type: PRESS_KEY
+[17:40:12]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:12]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:12]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:12]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:12]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:12]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:12]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:12]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:12]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:12]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:12]UIScan - WindowSearch name : gimp_image_menu_open, type: PIXEL
+[17:40:12]UIScan - WindowSearch FAILURE (not found) - name : gimp_image_menu_open, type: PIXEL
+[17:40:12]ACTION - name : goToMenu, type: PRESS_KEY
+[17:40:13]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:13]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:13]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:13]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:13]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:13]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:13]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:13]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:13]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:13]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:13]UIScan - WindowSearch name : gimp_image_menu_open, type: PIXEL
+[17:40:13]UIScan - WindowSearch FAILURE (not found) - name : gimp_image_menu_open, type: PIXEL
+[17:40:13]ACTION - name : goToMenu, type: PRESS_KEY
+[17:40:13]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:13]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:13]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:13]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:13]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:13]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:13]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:13]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:13]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:13]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:14]UIScan - WindowSearch name : gimp_image_menu_open, type: PIXEL
+[17:40:14]UIScan - WindowSearch FAILURE (not found) - name : gimp_image_menu_open, type: PIXEL
+[17:40:14]ACTION - name : goToMenu, type: PRESS_KEY
+[17:40:14]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:14]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:14]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:14]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:14]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:14]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:14]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:14]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:14]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:14]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:14]UIScan - WindowSearch name : gimp_image_menu_open, type: PIXEL
+[17:40:14]UIScan - WindowSearch FAILURE (not found) - name : gimp_image_menu_open, type: PIXEL
+[17:40:14]ACTION - name : goToMenu, type: PRESS_KEY
+[17:40:14]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:14]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:14]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:14]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:14]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:14]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:14]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:15]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:15]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:15]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:15]UIScan - WindowSearch name : gimp_image_menu_open, type: PIXEL
+[17:40:15]UIScan - WindowSearch FAILURE (not found) - name : gimp_image_menu_open, type: PIXEL
+[17:40:15]ACTION - name : goToMenu, type: PRESS_KEY
+[17:40:15]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:15]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:15]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:15]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:15]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:15]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:15]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:15]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:15]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:15]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:15]UIScan - WindowSearch name : gimp_image_menu_open, type: PIXEL
+[17:40:15]UIScan - WindowSearch FAILURE (not found) - name : gimp_image_menu_open, type: PIXEL
+[17:40:15]ACTION - name : goToMenu, type: PRESS_KEY
+[17:40:15]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:15]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:15]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:15]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:16]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:16]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:16]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:16]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:16]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:16]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:16]UIScan - WindowSearch name : gimp_image_menu_open, type: PIXEL
+[17:40:16]UIScan - WindowSearch FAILURE (not found) - name : gimp_image_menu_open, type: PIXEL
+[17:40:16]ACTION - name : goToMenu, type: PRESS_KEY
+[17:40:16]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:16]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:16]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:16]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:16]ACTION - name : goToImageMenu, type: ARROW_RIGHT
+[17:40:16]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:16]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM
+[17:40:16]ACTION - name : goToCanvasMenu, type: ARROW_BOTTOM

@@ -18,7 +18,10 @@ global ACTION_TYPE := { CLICK_RIGHT: "CLICK_RIGHT"
 	, CTRL_SHIFT_KEY: "CTRL_SHIFT_KEY"
 	, WRITE: "WRITE"
 	, TAB: "TAB"
-	, ENTER: "ENTER" }
+	, ENTER: "ENTER"
+	, ARROW_RIGHT: "ARROW_RIGHT"
+	, ARROW_BOTTOM: "ARROW_BOTTOM"
+	, PRESS_KEY: "PRESS_KEY" }
 
 ; AVAILABLE OPTIONS :
 ; x
@@ -48,7 +51,8 @@ class ScreenAction {
 		}
 		if(this.type == ACTION_TYPE.CTRL_SHIFT_KEY) {
 			key := this.options.key
-			Send ^+{%key%}
+			Send ^+{%key% down}
+			Send ^+{%key% up}
 		}
 		if(this.type == ACTION_TYPE.WRITE) {
 			write(this.options.text)
@@ -58,6 +62,17 @@ class ScreenAction {
 		}
 		if(this.type == ACTION_TYPE.ENTER) {
 			Send {Enter}
+		}
+		if(this.type == ACTION_TYPE.PRESS_KEY) {
+			key := this.options.key
+			Send {%key% down}
+			Send {%key% up}
+		}
+		if(this.type == ACTION_TYPE.ARROW_RIGHT) {
+			Send {Right}
+		}
+		if(this.type == ACTION_TYPE.ARROW_BOTTOM) {
+			Send {Bottom}
 		}
 	}
 
@@ -78,6 +93,9 @@ class ScreenAction {
 			log.add(text_concat("ACTION - Missing options for ", this.name, ", type : " this.type), true)
 		}
 		if(this.type == ACTION_TYPE.WRITE && (!this.options || !this.options.text)) {
+			log.add(text_concat("ACTION - Missing options for ", this.name, ", type : " this.type), true)
+		}
+		if(this.type == ACTION_TYPE.PRESS_KEY && (!this.options || !this.options.key)) {
 			log.add(text_concat("ACTION - Missing options for ", this.name, ", type : " this.type), true)
 		}
 	}

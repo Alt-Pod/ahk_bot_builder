@@ -13,11 +13,23 @@ sequenceCropImgWithGimp(name, zone) {
 	copyPrintscreen := new ScreenAction(ACTION_TYPE.CTRL_SHIFT_KEY, "copyPrintscreen", { key: "v" })
 	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "copyPrintscreen", false,  copyPrintscreen))
 
-	openMenu := new ScreenAction(ACTION_TYPE.CLICK_LEFT, "openMenu", { x: 180, y:  42})
-	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.SCREEN_FAILURE_ACTION, "confirmGimpMenuIsOpen", screen_gimp_image_menu_open, openMenu))
 
-	openCanvasMenu := new ScreenAction(ACTION_TYPE.CLICK_LEFT, "openCanvasMenu", { x: 215, y:  135})
-	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.SCREEN_FAILURE_ACTION, "confirmOpenCanvasMenu", screen_gimp_canvas_menu_open, openCanvasMenu))
+
+
+
+	goToMenu := new ScreenAction(ACTION_TYPE.PRESS_KEY, "goToMenu", { key: "F10" })
+	goToImageMenu := new ScreenAction(ACTION_TYPE.ARROW_RIGHT, "goToImageMenu")
+	goToCanvasMenu := new ScreenAction(ACTION_TYPE.ARROW_BOTTOM, "goToCanvasMenu")
+	openCanvasMenu := new ScreenAction(ACTION_TYPE.ENTER, "openCanvasMenu")
+
+	openCanvasMenuStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "openCanvasMenuStep", false, openCanvasMenu, { chainedStep: TODO })
+	goToCanvasMenuStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "goToCanvasMenuStep", false, goToCanvasMenu, { repeatedStep: 4, chainedStep: TODO })
+	goToImageMenuStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "goToImageMenuStep", false, goToImageMenu, { repeatedStep: 4, chainedStep: goToCanvasMenuStep })
+	goToMenuStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "goToMenuStep", false, goToMenu, { chainedStep: goToImageMenuStep })
+	sequence.addStep(goToMenuStep)
+
+	confirmGimpMenuIsOpen := new SequenceStep(SEQUENCE_STEP_TYPE.SCREEN_FAILURE_STEP, "confirmGimpMenuIsOpen", screen_gimp_image_menu_open, false, { failureStep: goToMenuStep })
+	sequence.addStep(confirmGimpMenuIsOpen)
 
 	xSize := zone.x2 - zone.x1
 	writeCanvasSize := new ScreenAction(ACTION_TYPE.WRITE, "writeCanvasSize", { text: xSize })

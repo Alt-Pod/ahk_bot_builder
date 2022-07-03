@@ -233,6 +233,17 @@ array_pushFirst(array, value) {
 	return result
 }
 
+array_pushSecond(array, value) {
+	result := []
+	Loop % array.length() {
+		result.push(array[A_Index])
+		if(A_Index == 1) {
+			result.push(value)
+		}
+	}
+	return result
+}
+
 array_first(array) {
 	if(!array or array.length() == 0) {
 		return null

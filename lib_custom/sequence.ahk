@@ -34,11 +34,15 @@ class Sequence {
 	}
 
 	addStep(sequenceStep) {
-		this.steps.push(sequenceStep) 
+		this.steps.push(build_sequence_step(sequenceStep)) 
 	}
 
 	addStepFirst(sequenceStep) {
-		this.steps := array_pushFirst(this.steps, sequenceStep) 
+		this.steps := array_pushFirst(this.steps, build_sequence_step(sequenceStep)) 
+	}
+
+	addStepSecond(sequenceStep) {
+		this.steps := array_pushSecond(this.steps, build_sequence_step(sequenceStep)) 
 	}
 
 	play() {
@@ -76,7 +80,8 @@ class Sequence {
 
 global SEQUENCE_STEP_TYPE := { WAIT_FOR_SCREEN: "WAIT_FOR_SCREEN"
 	, ACTION: "ACTION"
-	, SCREEN_FAILURE_ACTION: "SCREEN_FAILURE_ACTION" }
+	, SCREEN_FAILURE_ACTION: "SCREEN_FAILURE_ACTION"
+	, SCREEN_FAILURE_STEP: "SCREEN_FAILURE_STEP" }
 
 remove_sequence_step_from_sequence(payload) {
 	if(!payload || !payload.stepIdToBeRemoved) {
@@ -92,15 +97,62 @@ remove_sequence_step_from_sequence(payload) {
 	CYCLE_DATA.sequences := array_pushFirst(sequences, sequence)
 }
 
-sequence_add_step_first(step) {
+sequence_add_step_first_as_failure_step(payload) {
+	if(!payload || !payload.failureStep) {
+		log.add("A sequence add step first as failure step was launched but no step was found", true)
+	}
+	sequences := CYCLE_DATA.sequences
+	sequence := array_first(sequences)
+
+	sequence.addStepFirst(payload.failureStep)
+	
+	sequences := array_removeFirst(sequences)
+	CYCLE_DATA.sequences := array_pushFirst(sequences, sequence)
+}
+
+sequence_add_built_step_first(step) {
 	if(!step) {
-		log.add("A sequence add step firstwas launched but no step was found", true)
+		log.add("A sequence add step first was launched but no step was found", true)
 	}
 	sequences := CYCLE_DATA.sequences
 	sequence := array_first(sequences)
 
 	sequence.addStepFirst(step)
 	
+	sequences := array_removeFirst(sequences)
+	CYCLE_DATA.sequences := array_pushFirst(sequences, sequence)
+}
+
+sequence_add_built_step_second(step) {
+	if(!step) {
+		log.add("A sequence add step second was launched but no step was found", true)
+	}
+	sequences := CYCLE_DATA.sequences
+	sequence := array_first(sequences)
+
+	sequence.addStepSecond(step)
+	
+	sequences := array_removeFirst(sequences)
+	CYCLE_DATA.sequences := array_pushFirst(sequences, sequence)
+}
+
+sequence_duplicate_step(stepId) {
+	sequences := CYCLE_DATA.sequences
+	sequence := array_first(sequences)
+
+	targetStep := null
+	Loop % sequence.steps.length() {
+		step := sequence.steps[A_Index]
+		if(step.id == stepId) {
+			targetStep := new SequenceStep(step.type, step.name, step.windowSearch, step.action, stepOption)
+			targetStep.chainedStep := false
+			targetStep.repeatedStep := false
+		}
+	}
+	if(!targetStep) {
+		log.add("A duplicated target step wasnt found in sequence", true)
+	}
+	sequence.addStepFirst(targetStep)
 	sequences := array_removeFirst(sequences)
 	CYCLE_DATA.sequences := array_pushFirst(sequences, sequence)
 }
@@ -115,21 +167,39 @@ sequence_add_step_first_as_action(payload) {
 	}
 	action := payload.action
 	sequenceStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, action.name, false,  action)
-	sequence_add_step_first(sequenceStep)
+	sequence_add_built_step_first(sequenceStep)
+}
+
+build_sequence_step(step) {
+	return new SequenceStep(step.type, step.name, step.windowSearch, step.action, step.options)
 }
 
 class SequenceStep {
-	__New(type, name = "undefined", windowSearch = false, action = false) {
+	__New(type, name = "undefined", windowSearch = false, action = false, options = false) {
 		this.id := random_guid()
 		this.name := name
 		this.type := type
 		this.windowSearch := windowSearch
 		this.action := action
 		this.isFinished := false
+		this.options := options
+
+		if(options && options.chainedStep) {
+			this.chainedStep := build_sequence_step(options.chainedStep)
+		}
+		if(options && options.failureStep) {
+			this.failureStep := build_sequence_step(options.failureStep)
+		}
+		if(options && options.repeatedStep) {
+			this.repeatedStep := options.repeatedStep
+		}
+
 		this.setup()
 	}
 
 	run() {
+		this.runChainedStep()
+		this.runRepeatedStep()
 		if(this.type == SEQUENCE_STEP_TYPE.WAIT_FOR_SCREEN) {
 			this.runWaitForScreen()
 		}
@@ -139,6 +209,9 @@ class SequenceStep {
 		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_FAILURE_ACTION) {
 			this.runScreenFailureAction()
 		}
+		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_FAILURE_STEP) {
+			this.runScreenFailureStep()
+		}
 	}
 
 	runScreenFailureAction() {
@@ -146,6 +219,34 @@ class SequenceStep {
 			, func("remove_sequence_step_from_sequence")
 			, func("sequence_add_step_first_as_action")
 			, { action: this.action, stepIdToBeRemoved: this.id })
+	}
+
+	runScreenFailureStep() {
+		add_window_search_to_ui_scan(this.windowSearch
+			, func("remove_sequence_step_from_sequence")
+			, func("sequence_add_step_first_as_failure_step")
+			, { failureStep: this.failureStep, stepIdToBeRemoved: this.id })
+	}
+
+	runChainedStep() {
+		chainedStep := this.chainedStep
+		if(!chainedStep) {
+			return
+		}
+		this.chainedStep := false
+		sequence_add_built_step_second(chainedStep)
+	}
+
+	runRepeatedStep() {
+		options := this.options
+		if(!options || !options.repeatedStep) {
+			return
+		}
+		nbRepeact := options.repeatedStep
+		this.repeatedStep := false
+		Loop % nbRepeact {
+			sequence_duplicate_step(this.id)
+		}
 	}
 
 	runAction() {
@@ -160,6 +261,11 @@ class SequenceStep {
 			, { stepIdToBeRemoved: this.id })
 	}
 
+	runScreenChainedAction() {
+		add_action(this.action)
+		this.isFinished := true
+	}
+
 	setup() {
 		if(!this.type) {
 			log.add(text_concat("SEQUENCE STEP - Missing type for ", this.name), true)
@@ -170,8 +276,11 @@ class SequenceStep {
 		if(this.type == SEQUENCE_STEP_TYPE.ACTION && !this.action) {
 			log.add(text_concat("SEQUENCE STEP - Missing action for ", this.name, ", type : " this.type), true)
 		}
-		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_FAILURE_ACTION && (!this.action ||  !this.windowSearch)) {
+		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_FAILURE_ACTION && (!this.action || !this.windowSearch)) {
 			log.add(text_concat("SEQUENCE STEP - Missing action and/or window search for ", this.name, ", type : " this.type), true)
+		}
+		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_FAILURE_STEP && (!this.windowSearch || !this.options.failureStep)) {
+			log.add(text_concat("SEQUENCE STEP - Missing action/windowSearch/options for ", this.name, ", type : " this.type), true)
 		}
 	}
 }
