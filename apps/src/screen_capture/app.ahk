@@ -56,10 +56,6 @@ AppScreenCaptureSetImgMod() {
 	end_prompt_mode()
 }
 
-appScreenCaptureEmptyHotkey() {
-	; DO NOTHING
-}
-
 ; MODS BELOW
 ; _______________________________________
 ; _______________________________________
@@ -130,6 +126,7 @@ screenshotImgZone() {
 	if(appScreenCaptureEndGimp) {
 		gimp.end()
 		Reload
+		appScreenCaptureEndGimp := false
 		return
 	}
 	sequenceCropImgWithGimp(AppScreenCaptureScreenName, zone, func("endSequenceCropImgWithGimp"))
@@ -224,7 +221,7 @@ setpixelModClickInputListener() {
 	}
 	appScreenCaptureHasSetClickListener := true
 	Hotkey, LButton, appScreenCaptureSetRegisterPixelScreenName
-	Hotkey, Enter, appScreenCaptureEmptyHotkey
+	Hotkey, Enter, nothing
 }
 
 AppScreenCaptureRegisterPixelScreenName() {

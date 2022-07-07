@@ -6,3 +6,5 @@
 #Include %A_ScriptDir%/screens/riot_login.ahk
 #Include %A_ScriptDir%/screens/riot_login_username_input.ahk
 #Include %A_ScriptDir%/screens/riot_login_password_input.ahk
+#Include %A_ScriptDir%/screens/riot_lol_play_cta.ahk
+#Include %A_ScriptDir%/screens/riot_launch_lol_client.ahk

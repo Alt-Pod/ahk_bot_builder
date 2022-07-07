@@ -17,7 +17,7 @@ handle_ui_scan() {
 	CYCLE_DATA.uiScan := uiScan
 }
 
-add_window_search_to_ui_scan(windowSearch, success, failure, options) {
+add_window_search_to_ui_scan(windowSearch, success, failure, options = false) {
 	uiScan := CYCLE_DATA.uiScan
 	windowSearch.setCallbacks(success, failure, options)
 	uiScan.addWindowSearch(windowSearch)
@@ -87,11 +87,11 @@ class WindowSearch {
 		this.options := options
 	}
 
-	success() {
+	success(result) {
  		log.add(text_concat("UIScan - WindowSearch SUCCESS (found) - name : ", this.name, ", type: ", this.type))
 		onSuccess := this.onSuccess
 		if(!!onSuccess) {
-			%onSuccess%(this.options)
+			%onSuccess%(this.options, result)
 		}
 	}
 
@@ -109,7 +109,7 @@ class WindowSearch {
 		imgPath = %A_ScriptDir%/screens/img/%imgName%.png
 		ImageSearch, posX, posY, zone.x1, zone.y1, zone.x2, zone.y2, *5 %imgPath%
 		if(posX) {
-			this.success()
+			this.success({ x: posX, y: posY})
 			return
 		}
 		this.failure()
@@ -119,7 +119,7 @@ class WindowSearch {
 		zone := this.zone
 		PixelSearch, OutputVarX, OutputVarY, zone.x1, zone.y1, zone.x2, zone.y2, this.pixelColor, 3, Fast
 		if(OutputVarX) {
-			this.success(OutputVarX, OutputVarY)
+			this.success({ x: OutputVarX, y: OutputVarY })
 			return
 		}
 		this.failure()

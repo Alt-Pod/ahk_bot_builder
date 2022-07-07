@@ -1,3 +1,3 @@
-; EXAMPLE TEMPLATE TO DUPLICATE AND NAME 
+; EXAMPLE TEMPLATE TO DUPLICATE AND NAME "credentials.ahk"
 
-global credentials := { APP_LOGIN_USERNAME: "MyUsername", APP_LOGIN_PASSWORD: "MyPassword" }
+global credentials := { RIOT_LOGIN: "MyUsername", RIOT_PASSWORD: "MyPassword" }

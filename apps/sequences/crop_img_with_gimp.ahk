@@ -18,7 +18,7 @@ sequenceCropImgWithGimp(name, zone, callback) {
 	goToCanvasMenu := new ScreenAction(ACTION_TYPE.ARROW_BOTTOM, "goToCanvasMenu")
 	openCanvasMenu := new ScreenAction(ACTION_TYPE.ENTER, "openCanvasMenu")
 
-	openCanvasMenuStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "openCanvasMenuStep", false, openCanvasMenu, { chainedStep: TODO })
+	openCanvasMenuStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "openCanvasMenuStep", false, openCanvasMenu)
 	goToCanvasMenuStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "goToCanvasMenuStep", false, goToCanvasMenu, { repeatedStep: 3, chainedStep: openCanvasMenuStep })
 	goToImageMenuStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "goToImageMenuStep", false, goToImageMenu, { repeatedStep: 3, chainedStep: goToCanvasMenuStep })
 	goToMenuStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "goToMenuStep", false, goToMenu, { chainedStep: goToImageMenuStep })
