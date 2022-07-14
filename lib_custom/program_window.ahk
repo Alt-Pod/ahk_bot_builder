@@ -29,6 +29,7 @@ class Program {
 		if(!program_exists(this.processName) && !this.hasStarted) {
 			launch_program(this.processLocation)
 			this.hasStarted := true
+			pause(1000)
 		} else {
 			this.activate()
 		}

@@ -129,8 +129,9 @@ class WindowSearch {
 	}
 
 	handleOcr() {
-		zone := [ this.zone.x1
-			, this.zone.y1
+		WinGetPos, X, Y,,, A
+		zone := [ X + this.zone.x1
+			, Y + this.zone.y1
 			, (this.zone.x2 - this.zone.x1)
 			,(this.zone.y2 - this.zone.y1) ]
 		result := OCR(zone)
@@ -157,7 +158,7 @@ class WindowSearch {
 					, "{ x1: ", this.zone.x1, ", y1: ", this.zone.y1, ", x2: ",this.zone.x2, ", y2: ", this.zone.y2, " }",lineBreak)
 			}
 			ahkObjectExport := text_concat(ahkObjectExport,"false",lineBreak)
-			ahkObjectExport := text_concat(ahkObjectExport,quote,"false",quote,lineBreak)
+			ahkObjectExport := text_concat(ahkObjectExport,"false",lineBreak)
 			ahkObjectExport := text_concat(ahkObjectExport,"false",")")
 		}
 		if(this.type == WINDOW_SEARCH_TYPE.PIXEL) {

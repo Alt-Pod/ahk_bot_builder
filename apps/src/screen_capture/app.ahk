@@ -1,5 +1,5 @@
 
-#Include %A_ScriptDir%/apps/sequences/crop_img_with_gimp.ahk
+#Include %A_ScriptDir%/apps/sequences/gimp/crop_img_with_gimp.ahk
 
 global appScreenCaptureXPos
 global appScreenCaptureYPos
@@ -32,7 +32,7 @@ appScreenCapture() {
 	if(appScreenCaptureMod == WINDOW_SEARCH_TYPE.IMG) {
 		ImgMod()
 	}
-	if(appScreenCaptureMod == WINDOW_SEARCH_TYPE.IMG) {
+	if(appScreenCaptureMod == WINDOW_SEARCH_TYPE.OCR) {
 		OcrMod()
 	}
 	if(!appScreenCaptureHasRegisteredScreenName && appScreenCaptureMod) {
@@ -274,7 +274,6 @@ AppScreenCaptureRegisterPixelScreenName() {
 			`n`#Include `%A_ScriptDir`%/screens/%fileName%
 		), %import_path%
 	}
-	success = Your screen %AppScreenCaptureScreenName% has been saved
 	reloadApp()
 }
 
@@ -368,4 +367,60 @@ appScreenCaptureSetRegisterOcrZone() {
 	appScreenCaptureInputYPos := null
 	appScreenCaptureInput2XPos := null
 	appScreenCaptureInput2YPos := null
+}
+
+appScreenCaptureSetRegisterOcrZoneName() {
+	if(appScreenCaptureHasRegisteredScreenName || !appScreenCaptureInputXPos || !appScreenCaptureInput2XPos) {
+		return
+	}
+	Hotkey, Space, off
+	Hotkey, Enter, off
+	appScreenCaptureHasRegisteredScreenName := true
+	ToolTip % null
+	screenInfo = Info registered for OCR :`n`
+	screenInfo = Type : OCR WITH POSITION`n`n
+	screenInfo = %screenInfo% { x1: %appScreenCaptureInputXPos%
+		, y1: %appScreenCaptureInputYPos%
+		, x2: %appScreenCaptureInput2XPos%
+		, y2: %appScreenCaptureInput2YPos% }
+	screenInfo = %screenInfo% `n` `n` Please enter a name for this screen : 
+	prompt := new PromptUI("Give a name to your screen", A_ScreenWidth/2, A_ScreenHeight/2)
+	prompt.addText(screenInfo)
+	prompt.addInputText("AppScreenCaptureScreenName")
+	prompt.addText("Screen description : ")
+	prompt.addInputText("AppScreenCaptureScreenDescription")
+	prompt.addButton("AppScreenCaptureRegisterOcrScreenName", "Register Screen")
+	set_prompt_mod(prompt)
+}
+
+AppScreenCaptureRegisterOcrScreenName() {
+	submit_prompt()
+	dir = %A_ScriptDir%\screens\
+	fileName = %AppScreenCaptureScreenName%.ahk 
+	path = %dir%%fileName%
+	import_path = %dir%import.ahk
+	date := date_get()
+	time := time_clock_logformat()
+	zone := { x1: appScreenCaptureInputXPos, y1: appScreenCaptureInputYPos, x2: appScreenCaptureInput2XPos, y2: appScreenCaptureInput2YPos }
+	windowSearch := new WindowSearch(WINDOW_SEARCH_TYPE.OCR
+		, AppScreenCaptureScreenName
+		, zone
+		, false
+		, false
+		, false)
+	windowSearchGlobalVar := windowSearch.buildFromData()
+	if(appScreenCaptureInputXPos && appScreenCaptureInput2XPos) {
+		FileAppend,
+		(
+			%windowSearchGlobalVar%
+
+; Created at "%date% - %time%"
+; Description : "%AppScreenCaptureScreenDescription%"
+		), %path%
+		FileAppend,
+		(
+			`n`#Include `%A_ScriptDir`%/screens/%fileName%
+		), %import_path%
+	}
+	reloadApp()
 }

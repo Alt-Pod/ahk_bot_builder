@@ -1,5 +1,5 @@
-#Include %A_ScriptDir%/apps/sequences/riot_login.ahk
-#Include %A_ScriptDir%/apps/sequences/lol_client_launch_aram.ahk
+#Include %A_ScriptDir%/apps/sequences/riot/launch_lol_client.ahk
+#Include %A_ScriptDir%/apps/sequences/lol_client/lol_client_launch_aram.ahk
 
 appLolTrollMod() {
 	client := appLolTrollModGetLolClient()
@@ -14,7 +14,10 @@ appLolTrollMod() {
 appLolTrollModHandleRiot(riot) {
 	riot.start()
 	riot.activate()
-	sequenceRiotLogin()
+	if(riot.isOpen()) {
+		sequenceRiotLaunchClient()
+		return
+	}
 }
 
 appLolTrollModHandleClient(client, riot) {

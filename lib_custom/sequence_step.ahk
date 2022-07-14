@@ -4,7 +4,8 @@ global SEQUENCE_STEP_TYPE := { WAIT_FOR_SCREEN: "WAIT_FOR_SCREEN"
 	, SCREEN_FAILURE_ACTION: "SCREEN_FAILURE_ACTION"
 	, SCREEN_FAILURE_STEP: "SCREEN_FAILURE_STEP"
 	, EMPTY: "EMPTY"
-	, MULTIPLE_SCREEN_CALLBACK: "MULTIPLE_SCREEN_CALLBACK" }
+	, MULTIPLE_SCREEN_CALLBACK: "MULTIPLE_SCREEN_CALLBACK"
+	, READ_TEXT: "READ_TEXT" }
 
 build_sequence_step(step) {
 	return new SequenceStep(step.type, step.name, step.windowSearch, step.action, step.options)
@@ -75,6 +76,15 @@ handle_failure_sequence_step(payload) {
 	sequence_add_step_first(payload.failureStep)
 }
 
+handle_success_read_text(payload, result) {
+	successCallBack := payload.successCallBack
+	if(!payload || !result || !result.text || !successCallBack) {
+		log.add("A sequence read text step success was launched but no text or successCallBack was found", true)
+	}
+	%successCallBack%(result)
+	remove_sequence_step_by_id(payload)
+}
+
 class SequenceStep {
 	__New(type, name = "undefined", windowSearch = false, action = false, options = false) {
 		this.id := random_guid()
@@ -87,6 +97,9 @@ class SequenceStep {
 
 		if(options && options.chainedStep) {
 			this.chainedStep := build_sequence_step(options.chainedStep)
+		}
+		if(options && options.successCallBack) {
+			this.successCallBack := options.successCallBack
 		}
 		if(options && options.failureStep) {
 			this.failureStep := build_sequence_step(options.failureStep)
@@ -122,6 +135,9 @@ class SequenceStep {
 		}
 		if(this.type == SEQUENCE_STEP_TYPE.MULTIPLE_SCREEN_CALLBACK) {
 			this.runScreenMultipleCallback()
+		}
+		if(this.type == SEQUENCE_STEP_TYPE.READ_TEXT) {
+			this.runScreenReadText()
 		}
 		this.runChainedStep()
 		this.runRepeatedStep()
@@ -183,6 +199,13 @@ class SequenceStep {
 			, { stepIdToBeRemoved: this.id })
 	}
 
+	runScreenReadText() {
+		add_window_search_to_ui_scan(this.windowSearch
+			, func("handle_success_read_text")
+			, func("nothing")
+			, { successCallBack: this.successCallBack, stepIdToBeRemoved: this.id })
+	}
+
 	runCallback() {
 		callback := this.callback
 		if(!callback) {
@@ -221,6 +244,9 @@ class SequenceStep {
 		}
 		if(this.type == SEQUENCE_STEP_TYPE.MULTIPLE_SCREEN_CALLBACK && (!this.options || !this.options.screenCollection || !this.options.successCallBack || !this.options.failureCallBack)) {
 			log.add(text_concat("SEQUENCE STEP - Missing action/windowSearch/options for ", this.name, ", type : " this.type), true)
+		}
+		if(this.type == SEQUENCE_STEP_TYPE.READ_TEXT && (!this.options || !this.options.successCallBack)) {
+			log.add(text_concat("SEQUENCE STEP - Missing options for ", this.name, ", type : " this.type), true)
 		}
 	}
 
