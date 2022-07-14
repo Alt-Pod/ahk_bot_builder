@@ -15,18 +15,20 @@ program_exists(programProcessName) {
 }
 
 close_program(programProcessName) {
-	WinClose, %programProcessName%
+	WinKill, %programProcessName%
 }
 
 class Program {
 	__New(processName, processLocation) {
 		this.processName := processName
 		this.processLocation := processLocation
+		this.hasStarted := false
 	}
 
 	start() {
-		if(!program_exists(this.processName)) {
+		if(!program_exists(this.processName) && !this.hasStarted) {
 			launch_program(this.processLocation)
+			this.hasStarted := true
 		} else {
 			this.activate()
 		}

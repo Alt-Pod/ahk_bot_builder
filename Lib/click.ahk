@@ -10,17 +10,21 @@ click_withOffset(pos, offset) {
 
 click_left(x, y) {
 	mouseMove(x, y)
-	Click, down, left
-	Click, up, left
+	click_keep_left_pressed()
+	click_release_left()
 }
 
 click_press_left(x, y) {
 	mouseMove(x, y)
+	click_keep_left_pressed()
+}
+
+click_keep_left_pressed() {
 	Click, down, left
 }
 
 click_release_left() {
-	Click, down, left
+	Click, up, left
 }
 
 click_right(x, y) {

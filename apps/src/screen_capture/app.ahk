@@ -10,6 +10,7 @@ global appScreenCaptureInput2YPos
 global appScreenCaptureOffsetXPos
 global appScreenCaptureOffsetYPos
 global appScreenCapturePixelColor
+global appScreenCapturePixelColorInput
 global appScreenCaptureInfo
 global appScreenCaptureMod
 global AppScreenCaptureScreenName
@@ -19,8 +20,9 @@ global appScreenCaptureHasSetClickListener := false
 global appScreenCaptureHasSetSelectionMenu := false
 global appScreenCaptureHasRegisteredScreenName := false
 global appScreenCaptureHasLaunchedSaveImg := false
-global appScreenCaptureHasLaunchedGimp := false
+global appScreenCaptureIsPixelCaptureComplete := false
 global appScreenCaptureEndGimp := false
+global appScreenCaptureNoZone := false
 
 appScreenCapture() {
 	setAppScreenCaptureSelectionMenu()
@@ -29,6 +31,9 @@ appScreenCapture() {
 	}
 	if(appScreenCaptureMod == WINDOW_SEARCH_TYPE.IMG) {
 		ImgMod()
+	}
+	if(appScreenCaptureMod == WINDOW_SEARCH_TYPE.IMG) {
+		OcrMod()
 	}
 	if(!appScreenCaptureHasRegisteredScreenName && appScreenCaptureMod) {
 		ToolTip % appScreenCaptureInfo
@@ -43,7 +48,13 @@ setAppScreenCaptureSelectionMenu() {
 	prompt := new PromptUI("Choose your Screen Capture mod", A_ScreenWidth/2, A_ScreenHeight/2)
 	prompt.addButton("AppScreenCaptureSetPixelMod", "LAUNCH PIXEL MOD")
 	prompt.addButton("AppScreenCaptureSetImgMod", "LAUNCH IMG MOD")
+	prompt.addButton("AppScreenCaptureSetOcrMod", "LAUNCH OCR MOD")
 	set_prompt_mod(prompt)
+}
+
+AppScreenCaptureSetOcrMod() {
+	appScreenCaptureMod := WINDOW_SEARCH_TYPE.OCR
+	end_prompt_mode()
 }
 
 AppScreenCaptureSetPixelMod() {
@@ -76,10 +87,10 @@ ImgMod() {
 	MouseGetPos, appScreenCaptureXPos, appScreenCaptureYPos
 	appScreenCaptureInfo = x%appScreenCaptureXPos% y%appScreenCaptureYPos%`n`screen_x%appScreenCaptureOffsetXPos% screen_y%appScreenCaptureOffsetYPos%
 	if(!appScreenCaptureInputXPos) {
-		appScreenCaptureInfo = %appScreenCaptureInfo%`n`To launch { x1, y1 } of the img zone, left click with mouse
+		appScreenCaptureInfo = %appScreenCaptureInfo%`n`To launch { x1, y1 } of the img zone, press space
 	}
 	if(!!appScreenCaptureInputXPos && !appScreenCaptureInput2XPos) {
-		appScreenCaptureInfo = %appScreenCaptureInfo%`n`To launch { x2, y2 } of the img zone, left click with mouse
+		appScreenCaptureInfo = %appScreenCaptureInfo%`n`To launch { x2, y2 } of the img zone, press space
 		appScreenCaptureInfo = %appScreenCaptureInfo%`n` { x1: %appScreenCaptureInputXPos%, y1: %appScreenCaptureInputYPos% }
 	}
 	if(!!appScreenCaptureInput2XPos) {
@@ -87,7 +98,7 @@ ImgMod() {
 			, y1: %appScreenCaptureInputYPos%
 			, x2: %appScreenCaptureInput2XPos%
 			, y2: %appScreenCaptureInput2YPos% }
-		appScreenCaptureInfo = %appScreenCaptureInfo%`n`Press enter to register the zone or left click to start again
+		appScreenCaptureInfo = %appScreenCaptureInfo%`n` Press enter to register the zone or press space to start again
 	}
 }
 
@@ -98,7 +109,6 @@ registerImgZone() {
 		return
 	}
 	if(!appScreenCaptureInput2XPos) {
-		Send !{PrintScreen}
 		appScreenCaptureInput2XPos := appScreenCaptureXPos
 		appScreenCaptureInput2YPos := appScreenCaptureYPos
 		return
@@ -115,20 +125,15 @@ screenshotImgZone() {
 	gimpProcess = %A_ScriptDir%\utils\gimp\bin\gimp-2.8.exe
 	gimp := new Program(gimpName, gimpProcess)
 	gimpPlugin := new Program(gimpNamePlugin, gimpProcess)
-
-	if(!appScreenCaptureHasLaunchedGimp) {
-		gimp.start()
-		appScreenCaptureHasLaunchedGimp := true
+	if(appScreenCaptureEndGimp) {
+		gimp.end()
+		reloadApp()
+		return
 	}
+	gimp.start()
 	gimp.activate()
 	gimpPlugin.activate()
 	zone := { x1: appScreenCaptureInputXPos, y1: appScreenCaptureInputYPos, x2: appScreenCaptureInput2XPos, y2: appScreenCaptureInput2YPos }
-	if(appScreenCaptureEndGimp) {
-		gimp.end()
-		Reload
-		appScreenCaptureEndGimp := false
-		return
-	}
 	sequenceCropImgWithGimp(AppScreenCaptureScreenName, zone, func("endSequenceCropImgWithGimp"))
 
 }
@@ -141,7 +146,8 @@ saveImgZone() {
 	if(appScreenCaptureHasRegisteredScreenName ||!appScreenCaptureInputXPos || !appScreenCaptureInput2XPos) {
 		return
 	}
-	Hotkey, LButton, off
+	Send !{PrintScreen}
+	Hotkey, Space, off
 	Hotkey, Enter, off
 	appScreenCaptureHasRegisteredScreenName := true
 	ToolTip % null
@@ -157,6 +163,7 @@ saveImgZone() {
 	prompt.addInputText("AppScreenCaptureScreenName")
 	prompt.addText("Screen description : ")
 	prompt.addInputText("AppScreenCaptureScreenDescription")
+	prompt.addCheckbox("appScreenCaptureNoZone", "Do not register the zone")
 	prompt.addButton("AppScreenCaptureRegisterImgScreenName", "Register Screen")
 	set_prompt_mod(prompt)
 }
@@ -166,7 +173,7 @@ setImgModClickInputListener() {
 		return
 	}
 	appScreenCaptureHasSetClickListener := true
-	Hotkey, LButton, registerImgZone
+	Hotkey, Space, registerImgZone
 	Hotkey, Enter, saveImgZone
 }
 
@@ -178,9 +185,13 @@ AppScreenCaptureRegisterImgScreenName() {
 	import_path = %dir%import.ahk
 	date := date_get()
 	time := time_clock_logformat()
+	zone := { x1: appScreenCaptureInputXPos, y1: appScreenCaptureInputYPos, x2: appScreenCaptureInput2XPos, y2: appScreenCaptureInput2YPos }
+	if(appScreenCaptureNoZone) {
+		zone := false
+	}
 	windowSearch := new WindowSearch(WINDOW_SEARCH_TYPE.IMG
 		, AppScreenCaptureScreenName
-		, { x1: appScreenCaptureInputXPos, y1: appScreenCaptureInputYPos, x2: appScreenCaptureInput2XPos, y2: appScreenCaptureInput2YPos }
+		, zone
 		, false
 		, AppScreenCaptureScreenName
 		, false)
@@ -209,10 +220,20 @@ pixelMod() {
 		return
 	}
 	setpixelModClickInputListener()
+	setpixelModToolTip()
+}
+
+setpixelModToolTip() {
 	MouseGetPos, appScreenCaptureXPos, appScreenCaptureYPos
 	PixelGetColor, appScreenCapturePixelColor, appScreenCaptureXPos, appScreenCaptureYPos
 	appScreenCaptureInfo = x%appScreenCaptureXPos% y%appScreenCaptureYPos%`n` %appScreenCapturePixelColor%
-	appScreenCaptureInfo = %appScreenCaptureInfo%`n`Left click with mouse to register color & position
+	if(appScreenCaptureInputXPos) {
+		PixelGetColor, pixelColor, appScreenCaptureInputXPos, appScreenCaptureInputYPos
+		appScreenCaptureInfo = %appScreenCaptureInfo%`n`Press space to start again `n`Press enter to save the pixel :
+		appScreenCaptureInfo = %appScreenCaptureInfo%`n`{ x: %appScreenCaptureInputXPos%, y: %appScreenCaptureInputYPos%, color: %pixelColor% }
+		return
+	}
+	appScreenCaptureInfo = %appScreenCaptureInfo%`n` Press space to register color & position
 }
 
 setpixelModClickInputListener() {
@@ -220,8 +241,8 @@ setpixelModClickInputListener() {
 		return
 	}
 	appScreenCaptureHasSetClickListener := true
-	Hotkey, LButton, appScreenCaptureSetRegisterPixelScreenName
-	Hotkey, Enter, nothing
+	Hotkey, Space, appScreenCaptureSetRegisterPixel
+	Hotkey, Enter, appScreenCaptureSetRegisterPixelScreenName
 }
 
 AppScreenCaptureRegisterPixelScreenName() {
@@ -232,16 +253,15 @@ AppScreenCaptureRegisterPixelScreenName() {
 	import_path = %dir%import.ahk
 	date := date_get()
 	time := time_clock_logformat()
-	pixelColor = %appScreenCapturePixelColor%
 
 	windowSearch := new WindowSearch(WINDOW_SEARCH_TYPE.PIXEL
 		, AppScreenCaptureScreenName
 		, false
-		, { x: appScreenCaptureXPos, y: appScreenCaptureYPos }
+		, { x: appScreenCaptureInputXPos, y: appScreenCaptureInputYPos }
 		, false
-		, pixelColor)
+		, appScreenCapturePixelColorInput)
 	windowSearchGlobalVar := windowSearch.buildFromData()
-	if(appScreenCapturePixelColor) {
+	if(appScreenCapturePixelColorInput) {
 		FileAppend,
 		(
 			%windowSearchGlobalVar%
@@ -255,24 +275,38 @@ AppScreenCaptureRegisterPixelScreenName() {
 		), %import_path%
 	}
 	success = Your screen %AppScreenCaptureScreenName% has been saved
-	Reload
+	reloadApp()
+}
+
+appScreenCaptureSetRegisterPixel() {
+	if(appScreenCaptureHasRegisteredScreenName) {
+		return
+	}
+	if(appScreenCaptureInputXPos) {
+		appScreenCaptureInputXPos := null
+		appScreenCaptureInputYPos := null
+		return
+	}
+	appScreenCaptureInputXPos := appScreenCaptureXPos
+	appScreenCaptureInputYPos := appScreenCaptureYPos
 }
 
 appScreenCaptureSetRegisterPixelScreenName() {
 	if(appScreenCaptureHasRegisteredScreenName) {
 		return
 	}
-	Hotkey, LButton, off
+	PixelGetColor, appScreenCapturePixelColorInput, appScreenCaptureInputXPos, appScreenCaptureInputYPos
+	Hotkey, Space, off
 	Hotkey, Enter, off
 	appScreenCaptureHasRegisteredScreenName := true
 	ToolTip % null
 	screenInfo = Info registered for screen`n`
 	screenInfo = Type : SINGLE PIXEL WITH POSITION`n`
-	if(appScreenCaptureXPos) {
-		screenInfo = %screenInfo% `n` Pixel position : { x: %appScreenCaptureXPos%, y: %appScreenCaptureYPos% }
+	if(appScreenCaptureInputXPos) {
+		screenInfo = %screenInfo% `n` Pixel position : { x: %appScreenCaptureInputXPos%, y: %appScreenCaptureInputYPos% }
 	}
-	if(appScreenCapturePixelColor) {
-		screenInfo = %screenInfo% `n` Pixel color : %appScreenCapturePixelColor%
+	if(appScreenCapturePixelColorInput) {
+		screenInfo = %screenInfo% `n` Pixel color : %appScreenCapturePixelColorInput%
 	}
 	screenInfo = %screenInfo% `n` `n` Please enter a name for this screen : 
 	prompt := new PromptUI("Give a name to your screen", A_ScreenWidth/2, A_ScreenHeight/2)
@@ -282,4 +316,56 @@ appScreenCaptureSetRegisterPixelScreenName() {
 	prompt.addInputText("AppScreenCaptureScreenDescription")
 	prompt.addButton("AppScreenCaptureRegisterPixelScreenName", "Register Screen")
 	set_prompt_mod(prompt)
+}
+
+; OCR MOD
+; _______________________________________
+
+OcrMod() {
+	if(appScreenCaptureHasRegisteredScreenName) {
+		return
+	}
+	setOcrModClickInputListener()
+	MouseGetPos, appScreenCaptureXPos, appScreenCaptureYPos
+	appScreenCaptureInfo = x%appScreenCaptureXPos% y%appScreenCaptureYPos%`n`screen_x%appScreenCaptureOffsetXPos% screen_y%appScreenCaptureOffsetYPos%
+	if(!appScreenCaptureInputXPos) {
+		appScreenCaptureInfo = %appScreenCaptureInfo%`n`To launch { x1, y1 } of the ocr zone, press space
+	}
+	if(!!appScreenCaptureInputXPos && !appScreenCaptureInput2XPos) {
+		appScreenCaptureInfo = %appScreenCaptureInfo%`n`To launch { x2, y2 } of the ocr zone, press space
+		appScreenCaptureInfo = %appScreenCaptureInfo%`n` { x1: %appScreenCaptureInputXPos%, y1: %appScreenCaptureInputYPos% }
+	}
+	if(!!appScreenCaptureInput2XPos) {
+		appScreenCaptureInfo = %appScreenCaptureInfo%`n` { x1: %appScreenCaptureInputXPos%
+			, y1: %appScreenCaptureInputYPos%
+			, x2: %appScreenCaptureInput2XPos%
+			, y2: %appScreenCaptureInput2YPos% }
+		appScreenCaptureInfo = %appScreenCaptureInfo%`n` Press enter to register the zone or press space to start again
+	}
+}
+
+setOcrModClickInputListener() {
+	if(appScreenCaptureHasSetClickListener) {
+		return
+	}
+	appScreenCaptureHasSetClickListener := true
+	Hotkey, Space, appScreenCaptureSetRegisterOcrZone
+	Hotkey, Enter, appScreenCaptureSetRegisterOcrZoneName
+}
+
+appScreenCaptureSetRegisterOcrZone() {
+	if(!appScreenCaptureInputXPos) {
+		appScreenCaptureInputXPos := appScreenCaptureXPos
+		appScreenCaptureInputYPos := appScreenCaptureYPos
+		return
+	}
+	if(!appScreenCaptureInput2XPos) {
+		appScreenCaptureInput2XPos := appScreenCaptureXPos
+		appScreenCaptureInput2YPos := appScreenCaptureYPos
+		return
+	}
+	appScreenCaptureInputXPos := null
+	appScreenCaptureInputYPos := null
+	appScreenCaptureInput2XPos := null
+	appScreenCaptureInput2YPos := null
 }

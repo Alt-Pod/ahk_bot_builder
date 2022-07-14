@@ -1,5 +1,6 @@
 global WINDOW_SEARCH_TYPE := { PIXEL: "PIXEL"
-	, IMG: "IMG" }
+	, IMG: "IMG"
+	, OCR: "OCR" }
 
 CYCLE_DATA.uiScan := new UIScan()
 
@@ -64,20 +65,22 @@ class WindowSearch {
 		this.pixelColor := pixelColor
 		if(type == WINDOW_SEARCH_TYPE.PIXEL) {
 			this.zone := { x1: pixelPosition.x, y1: pixelPosition.y, x2: pixelPosition.x+1, y2: pixelPosition.y+1 }
-		} else if(zone == false) {
-			this.zone := { x1: 0, y1: 0, x2: A_ScreenWidth, y2: A_ScreenHeight }
 		} else {
 			this.zone := zone
 		}
 	}
 
 	run() {
+		mouseMove(0,0)
 		log.add(text_concat("UIScan - WindowSearch name : ", this.name, ", type: ", this.type))
 		if(this.type == WINDOW_SEARCH_TYPE.PIXEL) {
 			this.handlePixelSearch()
 		}
 		if(this.type == WINDOW_SEARCH_TYPE.IMG) {
 			this.handleImgSearch()
+		}
+		if(this.type == WINDOW_SEARCH_TYPE.OCR) {
+			this.handleOcr()
 		}
 	}
 
@@ -125,6 +128,19 @@ class WindowSearch {
 		this.failure()
 	}
 
+	handleOcr() {
+		zone := [ this.zone.x1
+			, this.zone.y1
+			, (this.zone.x2 - this.zone.x1)
+			,(this.zone.y2 - this.zone.y1) ]
+		result := OCR(zone)
+		if(!result || result == "") {
+			this.failure()
+			return
+		}
+		this.success({ text: result })
+	}
+
 	buildFromData() {
 		quote = `"`
 		lineBreak := "`n        , "
@@ -133,21 +149,32 @@ class WindowSearch {
 		ahkObjectExport := "global screen_"
 		ahkObjectExport := text_concat(ahkObjectExport, this.name," := new WindowSearch(")
 		ahkObjectExport := text_concat(ahkObjectExport,quote,this.type,quote,lineBreak,quote,this.name,quote,lineBreak)
+		if(this.type == WINDOW_SEARCH_TYPE.OCR) {
+			if(this.zone == false) {
+				ahkObjectExport := text_concat(ahkObjectExport,"false",lineBreak)
+			} else {
+				ahkObjectExport := text_concat(ahkObjectExport
+					, "{ x1: ", this.zone.x1, ", y1: ", this.zone.y1, ", x2: ",this.zone.x2, ", y2: ", this.zone.y2, " }",lineBreak)
+			}
+			ahkObjectExport := text_concat(ahkObjectExport,"false",lineBreak)
+			ahkObjectExport := text_concat(ahkObjectExport,quote,"false",quote,lineBreak)
+			ahkObjectExport := text_concat(ahkObjectExport,"false",")")
+		}
 		if(this.type == WINDOW_SEARCH_TYPE.PIXEL) {
 			ahkObjectExport := text_concat(ahkObjectExport,"false",lineBreak)
 			ahkObjectExport := text_concat(ahkObjectExport
 				, "{ x: ", this.pixelPosition.x, ", y: ", this.pixelPosition.y," }",lineBreak)
-		}
-		if(this.type == WINDOW_SEARCH_TYPE.IMG) {
-			ahkObjectExport := text_concat(ahkObjectExport
-				, "{ x1: ", this.zone.x1, ", y1: ", this.zone.y1, ", x2: ",this.zone.x2, ", y2: ", this.zone.y2, " }",lineBreak)
-			ahkObjectExport := text_concat(ahkObjectExport,"false",lineBreak)
-		}
-		if(this.type == WINDOW_SEARCH_TYPE.PIXEL) {
 			ahkObjectExport := text_concat(ahkObjectExport,"false",lineBreak)
 			ahkObjectExport := text_concat(ahkObjectExport,quote,this.pixelColor,quote,")")
 		}
 		if(this.type == WINDOW_SEARCH_TYPE.IMG) {
+			if(this.zone == false) {
+				ahkObjectExport := text_concat(ahkObjectExport,"false",lineBreak)
+			} else {
+				ahkObjectExport := text_concat(ahkObjectExport
+					, "{ x1: ", this.zone.x1, ", y1: ", this.zone.y1, ", x2: ",this.zone.x2, ", y2: ", this.zone.y2, " }",lineBreak)
+			}
+			ahkObjectExport := text_concat(ahkObjectExport,"false",lineBreak)
 			ahkObjectExport := text_concat(ahkObjectExport,quote,this.imgName,quote,lineBreak)
 			ahkObjectExport := text_concat(ahkObjectExport,"false",")")
 		}

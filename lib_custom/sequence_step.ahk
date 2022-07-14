@@ -3,7 +3,8 @@ global SEQUENCE_STEP_TYPE := { WAIT_FOR_SCREEN: "WAIT_FOR_SCREEN"
 	, SCREEN_CALLBACK: "SCREEN_CALLBACK"
 	, SCREEN_FAILURE_ACTION: "SCREEN_FAILURE_ACTION"
 	, SCREEN_FAILURE_STEP: "SCREEN_FAILURE_STEP"
-	, EMPTY: "EMPTY" }
+	, EMPTY: "EMPTY"
+	, MULTIPLE_SCREEN_CALLBACK: "MULTIPLE_SCREEN_CALLBACK" }
 
 build_sequence_step(step) {
 	return new SequenceStep(step.type, step.name, step.windowSearch, step.action, step.options)
@@ -119,6 +120,9 @@ class SequenceStep {
 		if(this.type == SEQUENCE_STEP_TYPE.EMPTY) {
 			this.isFinished := true
 		}
+		if(this.type == SEQUENCE_STEP_TYPE.MULTIPLE_SCREEN_CALLBACK) {
+			this.runScreenMultipleCallback()
+		}
 		this.runChainedStep()
 		this.runRepeatedStep()
 		this.runCallback()
@@ -150,7 +154,7 @@ class SequenceStep {
 		add_window_search_to_ui_scan(this.windowSearch
 			, success
 			, failure
-			, this.options )
+			, this.buildCallbackPayload(this.windowSearch) )
 	}
 
 	runScreenFailureAction() {
@@ -188,6 +192,17 @@ class SequenceStep {
 		this.callback := false
 	}
 
+	runScreenMultipleCallback() {
+		success := this.options.successCallBack
+		failure := this.options.failureCallBack
+		Loop % this.options.screenCollection.length() {
+			add_window_search_to_ui_scan(this.options.screenCollection[A_Index]
+				, success
+				, failure
+				, this.buildCallbackPayload(this.options.screenCollection[A_Index]) )
+		}
+	}
+
 	handleError() {
 		if(!this.type) {
 			log.add(text_concat("SEQUENCE STEP - Missing type for ", this.name), true)
@@ -204,8 +219,19 @@ class SequenceStep {
 		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_FAILURE_STEP && (!this.windowSearch || !this.options|| !this.options.failureStep)) {
 			log.add(text_concat("SEQUENCE STEP - Missing action/windowSearch/options for ", this.name, ", type : " this.type), true)
 		}
-		if(this.type == SEQUENCE_STEP_TYPE.SCREEN_CALLBACK && (!this.windowSearch || !this.options || !this.options.successCallBack || !this.options.failureCallBack)) {
+		if(this.type == SEQUENCE_STEP_TYPE.MULTIPLE_SCREEN_CALLBACK && (!this.options || !this.options.screenCollection || !this.options.successCallBack || !this.options.failureCallBack)) {
 			log.add(text_concat("SEQUENCE STEP - Missing action/windowSearch/options for ", this.name, ", type : " this.type), true)
 		}
+	}
+
+	buildCallbackPayload(windowSearch = false) {
+		result := { name: this.name, type: this.type }
+		if(windowSearch) {
+			result := map_assign({ windowSearchName: windowSearch.name }, result)
+		}
+		if(!this.options) {
+			return result
+		}
+		return map_assign(this.options, result)
 	}
 }

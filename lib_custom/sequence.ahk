@@ -52,17 +52,14 @@ class Sequence {
 	}
 
 	addStep(sequenceStep) {
-		log.add(text_concat("SEQUENCE '", this.name, "' added step '", sequenceStep.name, "' on last position"))
 		this.steps.push(build_sequence_step(sequenceStep)) 
 	}
 
 	addStepFirst(sequenceStep) {
-		log.add(text_concat("SEQUENCE '", this.name, "' added step '", sequenceStep.name, "' on first position"))
 		this.steps := array_pushFirst(this.steps, build_sequence_step(sequenceStep)) 
 	}
 
 	addStepSecond(sequenceStep) {
-		log.add(text_concat("SEQUENCE '", this.name, "' added step '", sequenceStep.name, "' on second position"))
 		this.steps := array_pushSecond(this.steps, build_sequence_step(sequenceStep)) 
 	}
 

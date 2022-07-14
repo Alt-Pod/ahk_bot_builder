@@ -3,6 +3,7 @@ global CYCLE_DATA := { hasEngineWorked: false
 	, sleepTime: 0 
 	, promptMod: false 
 	, textToWrite: ""
+	, mouseDrag: false
 	, uiScan: null
 	, action: null
 	, store: {}

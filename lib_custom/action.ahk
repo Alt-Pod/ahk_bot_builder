@@ -22,7 +22,9 @@ global ACTION_TYPE := { CLICK_RIGHT: "CLICK_RIGHT"
 	, ARROW_RIGHT: "ARROW_RIGHT"
 	, ARROW_BOTTOM: "ARROW_BOTTOM"
 	, PRESS_KEY: "PRESS_KEY"
-	, CTRL_KEY: "CTRL_KEY" }
+	, CTRL_KEY: "CTRL_KEY"
+	, EMPTY: "EMPTY"
+	, DRAG_AND_DROP: "DRAG_AND_DROP" }
 
 ; AVAILABLE OPTIONS :
 ; x
@@ -84,6 +86,14 @@ class ScreenAction {
 			Send ^{%key% down}
 			Send ^{%key% up}
 		}
+		if(this.type == ACTION_TYPE.DRAG_AND_DROP) {
+			start := this.options.start
+			end := this.options.end
+			mouse_drag(start, end)
+		}
+		if(this.type == ACTION_TYPE.EMPTY) {
+			nothing()
+		}
 
 		this.handleCooldown()
 	}
@@ -118,6 +128,9 @@ class ScreenAction {
 			log.add(text_concat("ACTION - Missing options for ", this.name, ", type : " this.type), true)
 		}
 		if(this.type == ACTION_TYPE.CTRL_KEY && (!this.options || !this.options.key)) {
+			log.add(text_concat("ACTION - Missing options for ", this.name, ", type : " this.type), true)
+		}
+		if(this.type == ACTION_TYPE.DRAG_AND_DROP && (!this.options || !this.options.start || !this.options.end)) {
 			log.add(text_concat("ACTION - Missing options for ", this.name, ", type : " this.type), true)
 		}
 	}

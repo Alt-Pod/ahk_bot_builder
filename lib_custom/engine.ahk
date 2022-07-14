@@ -5,8 +5,9 @@ engine() {
 
 	handle_quit()
 	handle_pause()
-	handle_prompt()
+	handle_mouse_drag()
 	handle_writing()
+	handle_prompt()
 	handle_ui_scan()
 	handle_action()
 	handle_sequence()

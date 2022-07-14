@@ -42,10 +42,6 @@ exitApp() {
 	ExitApp
 }
 
-resetApp() {
-	Reload
-}
-
 class PromptUI {
 	__New(title = "undefined", windowWidth = false, windowHeight = false) {
 		this.title := title
@@ -92,12 +88,16 @@ class PromptUI {
 		Gui, Add, Button, g%callback%, %text%
 	}
 
+	addCheckbox(globalVarName, text) {
+		Gui, Add, CheckBox, v%globalVarName%, %text%
+	}
+
 	addExitButton() {
 		this.addButton("exitApp", "EXIT")
 	}
 
 	addResetButton() {
-		this.addButton("resetApp", "RESTART APP")
+		this.addButton("reloadApp", "RESTART APP")
 	}
 
 	breakLine() {
