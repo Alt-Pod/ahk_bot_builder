@@ -29,6 +29,7 @@ sequenceRiotAcceptTosClick(options, result) {
 	acceptTosClick := new ScreenAction(ACTION_TYPE.CLICK_LEFT, "acceptTosClick", { x: result.x, y: result.y })
 	acceptTosClickStep := new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "acceptTosClick", false,  acceptTosClick)
 	remove_first_sequence_step()
+	remove_first_sequence_step()
 	sequence_add_step_first(acceptTosClickStep)
 }
 

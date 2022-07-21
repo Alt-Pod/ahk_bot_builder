@@ -43,12 +43,17 @@ remove_first_sequence() {
 	set_sequences(sequences)
 }
 
+remove_all_sequences() {
+	set_sequences([])
+}
+
 class Sequence {
-	__New(name) {
+	__New(name, timeout = 60000) {
 		this.name := name
 		this.hasStarted := false
 		this.hasEnded := false
 		this.steps := []
+		this.timeout := timeout
 	}
 
 	addStep(sequenceStep) {
@@ -66,7 +71,13 @@ class Sequence {
 	play() {
 		if(!this.hasStarted) {
 			this.hasStarted := true
+			this.startTime := time_get()
 			log.add(text_concat("SEQUENCE ", this.name, " has started"))
+		}
+		if(time_out(this.startTime, this.timeout)) {
+			log.add(text_concat("SEQUENCE ", this.name, " has was stopped because of timeout (", this.timeout,")"))
+			this.end()
+			return
 		}
 		if(this.steps.length() == 0) {
 			this.end()

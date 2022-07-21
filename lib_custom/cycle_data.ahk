@@ -6,5 +6,5 @@ global CYCLE_DATA := { hasEngineWorked: false
 	, mouseDrag: false
 	, uiScan: null
 	, action: null
-	, store: {}
+	, store: new Store("app")
 	, sequences: [] }

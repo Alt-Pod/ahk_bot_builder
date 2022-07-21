@@ -1,6 +1,13 @@
+#Include %A_ScriptDir%/apps/sequences/riot/prompt_login.ahk
+
 global hasSequenceRiotLoginStarted := false
 
 sequenceRiotLogin() {
+	credentials := store_get_value("loginCredentials")
+	if(!credentials) {
+		sequenceRiotLoginPromp()
+		return
+	}
 	if(hasSequenceRiotLoginStarted) {
 		return
 	}

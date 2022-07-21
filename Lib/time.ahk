@@ -26,7 +26,7 @@ time_format(t) {
 }
 
 time_out(time, timeout) {
-	if(!time or time_sec(time_diff(time, time_get())) > timeout) {
+	if(!time or time_diff(time, time_get()) > timeout) {
 		return true
 	}
 	return false

@@ -24,3 +24,4 @@
 #Include %A_ScriptDir%/screens/lol_client_ranked_popup.ahk
 #Include %A_ScriptDir%/screens/lol_client_popup_challenge_tier.ahk
 #Include %A_ScriptDir%/screens/riot_ocr.ahk
+#Include %A_ScriptDir%/screens/lol_client_tos_ocr.ahk

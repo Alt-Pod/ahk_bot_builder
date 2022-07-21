@@ -45,6 +45,23 @@ map_contains(map, attributes) {
 	return true
 }
 
+map_remove(map, keys) {
+	newMap := {}
+	for x, y in map {
+		toBeAdded := true
+		Loop % keys.length() {
+			key := keys[A_Index]
+			if(x == key) {
+				toBeAdded := false
+			}
+		}
+		if(toBeAdded) {
+			newMap[x] := y
+		}
+	}
+	return newMap
+}
+
 map_isMap(parameter) {
 	if(map_getKeys(parameter).length() > 0) {
 		return true

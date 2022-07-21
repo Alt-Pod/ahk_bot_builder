@@ -8,6 +8,38 @@ sequenceLolClientLaunchAram() {
 
 	sequence := new Sequence("Lol client launch Aram")
 
+	waitLolClientLaunchAram := new ScreenAction(ACTION_TYPE.EMPTY, "waitLolClientLaunchAram", { cooldown: 2000 })
+	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.ACTION, "waitLolClientLaunchAram", false,  waitLolClientLaunchAram))
+
+	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.READ_TEXT, "lol_client_tos_ocr", screen_lol_client_tos_ocr, false, { successCallBack: func("sequenceRiotLaunchClientGetScreenFromText")}))
+
+	add_sequence(sequence)
+}
+
+sequenceLolClientLaunchAramReset() {
+	hasSequenceLolClientLaunchAramStarted := false
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+sequenceLolClientLaunchAram2() {
+	if(hasSequenceLolClientLaunchAramStarted) {
+		return
+	}
+	hasSequenceLolClientLaunchAramStarted := true
+
+	sequence := new Sequence("Lol client launch Aram")
+
 	clientSplashPayload := { successCallBack: func("sequenceLolClientLaunchAramClientClick")
 		, failureCallBack: func("nothing")
 		, screenCollection: [screen_lol_client_game_mod

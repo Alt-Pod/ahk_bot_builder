@@ -10,11 +10,11 @@ appMenu() {
 }
 
 ButtonScreenCaptureMod() {
-	upsert_values_to_store({ appMod: PROMPT_MODE.SCREEN_CAPTURE_MOD })
+	store_set_value("appMod", PROMPT_MODE.SCREEN_CAPTURE_MOD)
 	end_prompt_mode()
 }
 
 ButtonLolTrollMod() {
-	upsert_values_to_store({ appMod: PROMPT_MODE.LOL_TROLL_MOD })
+	store_set_value("appMod", PROMPT_MODE.LOL_TROLL_MOD)
 	end_prompt_mode()
 }

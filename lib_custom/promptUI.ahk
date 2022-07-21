@@ -92,6 +92,14 @@ class PromptUI {
 		Gui, Add, CheckBox, v%globalVarName%, %text%
 	}
 
+	addSelect(globalVarName, array) {
+		Loop % array.length() {
+			value := array[A_Index]
+			input = %input%|%value%
+		}
+		Gui, Add, DropDownList, v%globalVarName%, %input%
+	}
+
 	addExitButton() {
 		this.addButton("exitApp", "EXIT")
 	}

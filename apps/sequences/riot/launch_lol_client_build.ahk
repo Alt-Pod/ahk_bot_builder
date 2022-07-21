@@ -5,7 +5,7 @@ sequenceLaunchLolClientBuild() {
 		return
 	}
 	hasSequencLaunchLolClientBuildStarted := true
-	sequence := new Sequence("Riot launch lol client build")
+	sequence := new Sequence("Riot launch lol client build", 5000)
 
 	launchPayload := { successCallBack: func("sequenceLaunchLolClientBuildClick") , failureCallBack: func("nothing")}
 	sequence.addStep(new SequenceStep(SEQUENCE_STEP_TYPE.SCREEN_CALLBACK, "LaunchLoLClientBuild", screen_riot_launch_lol_client, false, launchPayload))
